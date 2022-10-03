@@ -8,7 +8,7 @@ API for viewing ether and erc20 token balances
 **PROVIDER** (**HTTP_PROVIDER** being your blockchain node provider address OR
 **IPC_PROVIDER** - your local blockchain node address)
 4. run `docker build . -t eth-balance`
-5. run `docker run -d -p **(port)**:8080 --name eth-balance eth-balance`
+5. run `docker run -d -p (port):8080 --name eth-balance eth-balance`
 
 # Instructions for running (manual)
 1. Pull this repository
