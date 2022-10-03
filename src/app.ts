@@ -3,10 +3,12 @@ const app = require('express')()
 const config = require(path.join('./','..','config.json'))
 require('dotenv').config()
 
+
 import controller from './controller'
 app.get('/balance/:address',controller)
 
 app.listen(process.env.PORT,()=>{
+
     console.log('Server started')
 })
 
