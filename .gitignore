@@ -6,3 +6,6 @@
 data/
 node_modules/
 nodemon.json
+/dist/
+/srcjs/
+/nodemon.json
