@@ -3,15 +3,11 @@ const CoinGecko = require('coingecko-api');
 const crawler = require('erc20-token-list')
 // Initiate the CoinGecko API Client
 const CoinGeckoClient = new CoinGecko();
-import { promises as fs } from 'fs'
+import fs from 'fs'
 //file where the token data is stored for convenience
 
 module.exports = async (pages=20,rewrite=false)=>{
-    let check;
-    await fs.access(path.join('data','tokenbase.json')).then(()=>{
-        check=true
-    })
-    if(!check || rewrite ) {
+    if(!fs.existsSync(path.join('data','tokenbase.json')) || rewrite ) {
         console.log("Rewriting token base...")
         const coinList = new Map()
         const data = []
@@ -24,16 +20,16 @@ module.exports = async (pages=20,rewrite=false)=>{
         for (const coin of data) {
             const result = crawler.getTokenInfo(coin.symbol.toUpperCase())
             if (result) {
-                coinList.set(coin.name, result.address)
+                coinList.set(coin.symbol, result.address)
             }
         }
         console.log(`Map of tokens with size ${coinList.size} created`)
         //write to tokenbase.json file for further reuse
-        await fs.writeFile(path.join('data','tokenbase.json'),JSON.stringify(Object.fromEntries(coinList)))
+        await fs.promises.writeFile(path.join('data','tokenbase.json'),JSON.stringify(Object.fromEntries(coinList)))
         return coinList
     }
     else {
-        const tokensfile = await fs.readFile(path.join('data','tokenbase.json'))
+        const tokensfile = await fs.promises.readFile(path.join('data','tokenbase.json'))
         const tokenBase = Object.entries(JSON.parse(tokensfile.toString()))
         return new Map(tokenBase)
     }
