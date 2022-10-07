@@ -14,14 +14,24 @@ app.listen(process.env.PORT,()=>{
 
 import writeJob  from './writeJob'
 // Starting an async job
-const inter = config.job_interval || 60*1000
-const writer = (async function(interval:number){
-    while(true){
-        await (()=>{return new Promise(resolve => {
-            setTimeout(async ()=>{
-                await writeJob(config.address)
-                resolve('written to balance')
-            },interval)
-        })})()
-    }
-})(inter)
+const inter = config.job_interval || 3*1000
+// writeJob(config.address,inter)
+import workers from 'worker_threads'
+const write = ()=>{
+    const worker = new workers.Worker('./src/writeJob',{
+        workerData:{
+            address:config.address,
+            interval:inter
+        }
+    })
+    worker.on("online",()=>{
+        console.log("Job initialized")
+    })
+    worker.on("message",(msg)=>{
+        console.log(msg)
+    })
+    worker.on("error",err=>{
+        console.log(err)
+    })
+}
+write()
